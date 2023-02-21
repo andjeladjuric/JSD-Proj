@@ -1,35 +1,115 @@
-/*
-    An example textX language
-*/
-
-Program:
-    'begin'
-      commands*=Command    // *= operator means zero or more matches.
-      // commands will be
-      // a list of command objects
-    'end'
+GoogleCalendarModel:
+  owner=Person 
+  events+=GoogleCalendarEvent
+  tasks+=GoogleCalendarTask
+  reminders+=GoogleCalendarReminder
 ;
 
-// this is an example of abstract rule. command class will never be instantiated
-// in the model.
-Command:
-    InitialCommand | MoveCommand
+GoogleCalendarEvent:
+  'event' name=ID '{' 
+    'details': ''googleCalendarEventDetails=GoogleCalendarDetails ';'
+    'appointment':'googleCalendarEventAppointment=GoogleCalendarAppointment ';'
+    ('reminders: 'googleCalendarReminders=GoogleCalendarReminders ';')?
+    ('notification: 'googleCalendarEventNotification=GoogleCalendarEventNotification ';')?
+    ('visibility: 'googleCalendarEventVisibility=GoogleCalendarEventVisibility ';')?
+    ('Attendee: '';')?
+    stateHolidaysRules+=StateHolidayRule 
+    vacationDaysRules+=VacationDayRule //mozda je lakse da ovde racunamo da ima kolektivni odmor, fikisiran na neki period
+    lanchBreakRule+=LanchBreakRule
+  '}'
 ;
 
-InitialCommand:
-    'initial' x=INT ',' y=INT
+GoogleCalendarTask:
+  'task' name=ID '{' 
+    'details': ''googleCalendarTaskDetails=GoogleCalendarEventDetails ';'
+    'appointment':'googleCalendarTaskAppointment=GoogleCalendarAppointment ';'
+    ('reminders: 'googleCalendarReminders=GoogleCalendarReminders ';')?
+    myTasks+=GoogleCalendarTask
+    stateHolidaysRules+=StateHolidayRule 
+    vacationDaysRules+=VacationDayRule
+    lanchBreakRule+=LanchBreakRule
+  '}'
 ;
 
-MoveCommand:
-    direction=Direction (steps=INT)?
+GoogleCalendarReminder:
+    'reminder' name=ID '{'
+    '}'
 ;
 
-// this is an example of a match rule
-// match rules has either string match, regex match or other match rule as
-// its alternatives (e.g. int, string... or some user match rule)
-// match rule is treated as a contained match. no class will get created.
-Direction:
-    "up"|"down"|"left"|"right"
+GoogleCalendarDetails:
+  'title: ' eventTitle=Sentance ';'
+  'description: ' eventDescription=Sentance ';'
+;
+
+GoogleCalendarAppoitment:
+  'startDate: ' eventStartDate=Date ';'
+  'endDate: ' eventEndDate=Date ';'
+  ('startTime: ' eventStartTime=Time ';')?
+  ('endTime: ' eventEndTime=Time ';')?
+  ('location: ' eventLocation=Sentance ';')?
+;
+
+GoogleCalendarReminders:
+'turnOn:' 'reminderturnOn = Bool' ';'
+  ( 'repeat': 'reminderRepeat=ReminderRepeat' ';')?
+;
+
+GoogleCalendarEventNotification:
+  'notification' 'eventNotification = Sentance' ';'
+;
+
+ReminderRepeat:
+  'turnOn': 'repeatNotificationTurnOn=Bool' ';'
+  'repeatAgainFor': 'repeatNotificationFor=Time' ';' //na koliko opet da se oglasi
+;
+
+GoogleCalendarEventVisibility:
+  ( 'default': 'defaultVisibility=Sentance ';')?
+  ( 'public': 'publicVisibility=Sentance ';')?
+  ( 'private': 'privateVisibility=Sentance ';')? 
+;
+
+StateHolidayRule:
+  'stateHolidayDays: ' stateHolidayDays+=DayOff ';'
+
+VacationDayRule:
+  'vacationsDays: ' vacationsDays+=DayOff ';'
+;
+
+DayOff:
+'dayOff: 'dayOff=Date ';'
+
+LanchBreakRule:
+  'lanchBreakTime': 'lanchBreakTime:Time ';'
+;
+
+Person:
+  'person' name=ID '{'
+    'firstName: ' personFirstName=Sentance ';'
+    'firstName: ' personLastName=Sentance ';'
+    'email: ' personEmail=Sentance ';'
+  '}'
+;
+
+Attendee:
+  person = [Person]
+;
+
+Time:
+ hour=INT ':' minute=INT
+;
+
+Date:
+  year=INT '-' month=INT '-' day=INT 
+;
+
+Bool:
+  'true': 'true=INT ';' //0-off, 1-on
+;
+
+// We use sentance this way, cause we want to exlude ; and have many words
+Sentance:
+  value = /[^;]*/
 ;
 
 // special rule for comments.
