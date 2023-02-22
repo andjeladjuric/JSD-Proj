@@ -1,44 +1,38 @@
 GoogleCalendarModel:
   owner=Person 
-  events+=GoogleCalendarEvent
-  tasks+=GoogleCalendarTask
-  reminders+=GoogleCalendarReminder
+  events*=GoogleCalendarEvent
+  tasks*=GoogleCalendarTask
+  reminders*=GoogleCalendarReminder
 ;
 
 GoogleCalendarEvent:
-  'event' name=ID '{' 
-    'details': ''googleCalendarEventDetails=GoogleCalendarDetails ';'
-    'appointment':'googleCalendarEventAppointment=GoogleCalendarAppointment ';'
-    ('reminders: 'googleCalendarReminders=GoogleCalendarReminders ';')?
-    ('notification: 'googleCalendarEventNotification=GoogleCalendarEventNotification ';')?
-    ('visibility: 'googleCalendarEventVisibility=GoogleCalendarEventVisibility ';')?
-    ('Attendee: '';')?
-    stateHolidaysRules+=StateHolidayRule 
-    vacationDaysRules+=VacationDayRule //mozda je lakse da ovde racunamo da ima kolektivni odmor, fikisiran na neki period
-    lanchBreakRule+=LanchBreakRule
+  'event'  '"' title=ID '"' '{'
+  'description' ':' description=ID ';'
+  'time' ':' time=GoogleCalendarAppoitment ';'
+  'repeat' ':' repeat= RepeatRule ';'
+  'guests' ':' guests*=Person ';'
+  ('status:' status=EventStatus ';')?
+  ('visibility:' visibility=EventVisibility ';')?
+  ('notifications:' notifications*=EventNotification ';')?
   '}'
 ;
 
+
 GoogleCalendarTask:
-  'task' name=ID '{' 
-    'details': ''googleCalendarTaskDetails=GoogleCalendarEventDetails ';'
-    'appointment':'googleCalendarTaskAppointment=GoogleCalendarAppointment ';'
-    ('reminders: 'googleCalendarReminders=GoogleCalendarReminders ';')?
-    myTasks+=GoogleCalendarTask
-    stateHolidaysRules+=StateHolidayRule 
-    vacationDaysRules+=VacationDayRule
-    lanchBreakRule+=LanchBreakRule
-  '}'
+  'task' '"' title=ID '"' ','
+  '"' description=ID '"'
+  date=Date ','
+  time=Time ','
+  'repeat' repeat= RepeatRule','
+  allDay?='all day' ';'
 ;
 
 GoogleCalendarReminder:
-    'reminder' name=ID '{'
-    '}'
-;
-
-GoogleCalendarDetails:
-  'title: ' eventTitle=Sentance ';'
-  'description: ' eventDescription=Sentance ';'
+    'reminder' '"' title=ID '"' ','
+    date=Date ','
+    time=Time ','
+    'repeat' repeat= RepeatRule','
+    allDay?='all day' ';'
 ;
 
 GoogleCalendarAppoitment:
@@ -47,52 +41,35 @@ GoogleCalendarAppoitment:
   ('startTime: ' eventStartTime=Time ';')?
   ('endTime: ' eventEndTime=Time ';')?
   ('location: ' eventLocation=Sentance ';')?
+  ('time zone: ' eventTimeZone=TimeZone ';')?
 ;
 
-GoogleCalendarReminders:
-'turnOn:' 'reminderturnOn = Bool' ';'
-  ( 'repeat': 'reminderRepeat=ReminderRepeat' ';')?
+TimeZone:
+//TODO
 ;
 
-GoogleCalendarEventNotification:
-  'notification' 'eventNotification = Sentance' ';'
+RepeatRule:
+//TODO
 ;
 
-ReminderRepeat:
-  'turnOn': 'repeatNotificationTurnOn=Bool' ';'
-  'repeatAgainFor': 'repeatNotificationFor=Time' ';' //na koliko opet da se oglasi
+EventNotification:
+  //TODO
 ;
 
-GoogleCalendarEventVisibility:
-  ( 'default': 'defaultVisibility=Sentance ';')?
-  ( 'public': 'publicVisibility=Sentance ';')?
-  ( 'private': 'privateVisibility=Sentance ';')? 
+EventStatus:
+    'busy' | 'free'
 ;
 
-StateHolidayRule:
-  'stateHolidayDays: ' stateHolidayDays+=DayOff ';'
-
-VacationDayRule:
-  'vacationsDays: ' vacationsDays+=DayOff ';'
-;
-
-DayOff:
-'dayOff: 'dayOff=Date ';'
-
-LanchBreakRule:
-  'lanchBreakTime': 'lanchBreakTime:Time ';'
+EventVisibility:
+    'public' | 'private' | 'default'
 ;
 
 Person:
   'person' name=ID '{'
     'firstName: ' personFirstName=Sentance ';'
-    'firstName: ' personLastName=Sentance ';'
+    'lastName: ' personLastName=Sentance ';'
     'email: ' personEmail=Sentance ';'
   '}'
-;
-
-Attendee:
-  person = [Person]
 ;
 
 Time:
@@ -103,11 +80,6 @@ Date:
   year=INT '-' month=INT '-' day=INT 
 ;
 
-Bool:
-  'true': 'true=INT ';' //0-off, 1-on
-;
-
-// We use sentance this way, cause we want to exlude ; and have many words
 Sentance:
   value = /[^;]*/
 ;
