@@ -6,32 +6,32 @@ GoogleCalendarModel:
 ;
 
 GoogleCalendarEvent:
-  'event'  '"' title=ID '"' '{'
-  'description' ':' description=ID ';'
-  'time' ':' time=GoogleCalendarAppoitment ';'
-  'repeat' ':' repeat= RepeatRule ';'
-  'guests' ':' guests*=Person ';'
+  'Event'  '"' title=ID '"' '{'
+  'description:' description=ID ';'
+  'time:' time=GoogleCalendarAppoitment ';'
+  'repeat:' repeat= RepeatRule ';'
+  'guests:' guests*=Person[',']';'
   ('status:' status=EventStatus ';')?
   ('visibility:' visibility=EventVisibility ';')?
-  ('notifications:' notifications*=EventNotification ';')?
+  ('notifications:' notifications*=EventNotification['|'] ';')?
   '}'
 ;
 
 
 GoogleCalendarTask:
-  'task' '"' title=ID '"' ','
-  '"' description=ID '"'
+  'Task' '"' title=ID '"' ':'
+  ('"' description=ID '"' ',')?
   date=Date ','
   time=Time ','
-  'repeat' repeat= RepeatRule','
+  repeat= RepeatRule','
   allDay?='all day' ';'
 ;
 
 GoogleCalendarReminder:
-    'reminder' '"' title=ID '"' ','
+    'Reminder' '"' title=ID '"' ':'
     date=Date ','
     time=Time ','
-    'repeat' repeat= RepeatRule','
+    repeat= RepeatRule','
     allDay?='all day' ';'
 ;
 
@@ -41,19 +41,33 @@ GoogleCalendarAppoitment:
   ('startTime: ' eventStartTime=Time ';')?
   ('endTime: ' eventEndTime=Time ';')?
   ('location: ' eventLocation=Sentance ';')?
-  ('time zone: ' eventTimeZone=TimeZone ';')?
+  ('time zone: ' eventTimeZone=TimeZone ';')? //?
 ;
 
 TimeZone:
-//TODO
+ //TODO
 ;
 
 RepeatRule:
-//TODO
+'repeat every' recurrence=RecurrenceRule ','
+'on' day=RepeatDay ',' // TODO
+'ends' ends=EndsRule
+;
+
+RecurrenceRule:
+  INT 'd' | 'w' | 'm' | 'y'
+;
+
+RepeatDay:
+'Mo' | 'Tu' | 'We' | 'Th' | 'Fri' | 'Sat' | 'Sun'
+;
+
+EndsRule:
+'never' | 'on' Date | 'after' INT 'occurrences'
 ;
 
 EventNotification:
-  //TODO
+  'email' | 'notification' INT 'min' | 'h' | 'd' | 'w' 
 ;
 
 EventStatus:
@@ -65,11 +79,11 @@ EventVisibility:
 ;
 
 Person:
-  'person' name=ID '{'
-    'firstName: ' personFirstName=Sentance ';'
-    'lastName: ' personLastName=Sentance ';'
-    'email: ' personEmail=Sentance ';'
-  '}'
+  email=mailAdrRule
+;
+
+mailAdrRule:
+  /^[\w\.]+@([\w]+\.)+[\w]{2,4}$/
 ;
 
 Time:
