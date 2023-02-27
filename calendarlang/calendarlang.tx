@@ -1,0 +1,105 @@
+GoogleCalendarModel:
+  owner=Person 
+  events*=GoogleCalendarEvent
+  tasks*=GoogleCalendarTask
+  reminders*=GoogleCalendarReminder
+;
+
+GoogleCalendarEvent:
+  'Event'  '"' title=ID '"' '{'
+  'description:' description=ID ';'
+  'time:' time=GoogleCalendarAppoitment ';'
+  'repeat:' repeat= RepeatRule ';'
+  'guests:' guests*=Person[',']';'
+  ('status:' status=EventStatus ';')?
+  ('visibility:' visibility=EventVisibility ';')?
+  ('notifications:' notifications*=EventNotification['|'] ';')?
+  '}'
+;
+
+
+GoogleCalendarTask:
+  'Task' '"' title=ID '"' ':'
+  ('"' description=ID '"' ',')?
+  date=Date ','
+  time=Time ','
+  repeat= RepeatRule','
+  allDay?='all day' ';'
+;
+
+GoogleCalendarReminder:
+    'Reminder' '"' title=ID '"' ':'
+    date=Date ','
+    time=Time ','
+    repeat= RepeatRule','
+    allDay?='all day' ';'
+;
+
+GoogleCalendarAppoitment:
+  'startDate: ' eventStartDate=Date ';'
+  'endDate: ' eventEndDate=Date ';'
+  ('startTime: ' eventStartTime=Time ';')?
+  ('endTime: ' eventEndTime=Time ';')?
+  ('location: ' eventLocation=Sentance ';')?
+ // ('time zone: ' eventTimeZone=TimeZone ';')? //?
+;
+
+//TimeZone:
+ //TODO
+//;
+
+RepeatRule:
+'repeat every' recurrence=RecurrenceRule ','
+'on' day=RepeatDay ',' // TODO
+'ends' ends=EndsRule
+;
+
+RecurrenceRule:
+  INT 'd' | 'w' | 'm' | 'y'
+;
+
+RepeatDay:
+'Mo' | 'Tu' | 'We' | 'Th' | 'Fri' | 'Sat' | 'Sun'
+;
+
+EndsRule:
+'never' | 'on' Date | 'after' INT 'occurrences'
+;
+
+EventNotification:
+  'email' | 'notification' INT 'min' | 'h' | 'd' | 'w' 
+;
+
+EventStatus:
+    'busy' | 'free'
+;
+
+EventVisibility:
+    'public' | 'private' | 'default'
+;
+
+Person:
+  email=mailAdrRule
+;
+
+
+mailAdrRule:
+  /^[\w\.]+@([\w]+\.)+[\w]{2,4}$/
+;
+
+Time:
+ hour=INT ':' minute=INT
+;
+
+Date:
+  year=INT '-' month=INT '-' day=INT 
+;
+
+Sentance:
+  value = /[^;]*/
+;
+
+// special rule for comments.
+Comment:
+    /\/\/.*$/
+;
