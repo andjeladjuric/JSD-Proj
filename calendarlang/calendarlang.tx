@@ -41,12 +41,12 @@ GoogleCalendarAppoitment:
   ('startTime: ' eventStartTime=Time ';')?
   ('endTime: ' eventEndTime=Time ';')?
   ('location: ' eventLocation=Sentance ';')?
-  ('time zone: ' eventTimeZone=TimeZone ';')? //?
+ // ('time zone: ' eventTimeZone=TimeZone ';')? //?
 ;
 
-TimeZone:
+//TimeZone:
  //TODO
-;
+//;
 
 RepeatRule:
 'repeat every' recurrence=RecurrenceRule ','
@@ -81,6 +81,7 @@ EventVisibility:
 Person:
   email=mailAdrRule
 ;
+
 
 mailAdrRule:
   /^[\w\.]+@([\w]+\.)+[\w]{2,4}$/
