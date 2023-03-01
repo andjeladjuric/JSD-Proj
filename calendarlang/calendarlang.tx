@@ -9,7 +9,7 @@ GoogleCalendarEvent:
   'Event'  '"' title=Sentance '"' '{'
   'description:' description=Sentance ';'
   'time:' time=GoogleCalendarAppoitment ';'
-  'repeat:' repeat= RepeatRule ';'
+  'recurrence:' recurrence=RecurrenceRule ';'
   'guests:' guests*=mailAdrRule[',']';'
   ('status:' status=EventStatus ';')?
   ('visibility:' visibility=EventVisibility ';')?
@@ -23,7 +23,7 @@ GoogleCalendarTask:
   ('"' description=Sentance '"' ',')?
   date=Date ','
   time=Time ','
-  repeat= RepeatRule','
+  recurrence= RecurrenceRule','
   allDay?='all day' ';'
 ;
 
@@ -31,7 +31,7 @@ GoogleCalendarReminder:
     'Reminder' '"' title=Sentance '"' ':'
     date=Date ','
     time=Time ','
-    repeat= RepeatRule','
+    recurrence= RecurrenceRule','
     allDay?='all day' ';'
 ;
 
@@ -45,18 +45,25 @@ GoogleCalendarAppoitment:
   '}'
 ;
 
-RepeatRule:
-'repeat every' recurrence=RecurrenceRule ','
-'on' day=RepeatDay ',' // TODO
-'ends' ends=EndsRule
-;
 
 RecurrenceRule:
-  INT ('d' | 'w' | 'm' | 'y')
+  '{'
+    'freq=' freq=FrequentlyRepeatRule ';' 
+    ('count=' count=INT ';')?
+    ('byDay=' byday+=RepeatDay[','] ';')? 
+    ('byMonth=' byMonth=INT ';')? 
+    ('byMonthDay=' byMonthDay=INT ';')?
+    ('until=' until=Date ';')? 
+    ('interval=' interval=INT ';')?
+  '}'
+;
+
+FrequentlyRepeatRule:
+  ('daily' | 'weekly' | 'monthly' | 'yearly')
 ;
 
 RepeatDay:
-  'Mo' | 'Tu' | 'We' | 'Th' | 'Fri' | 'Sat' | 'Sun'
+  ('Mo' | 'Tu'| 'We'| 'Th'| 'Fr'| 'St' | 'Su')
 ;
 
 EndsRule:
