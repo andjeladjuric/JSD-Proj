@@ -29,7 +29,11 @@ def connect_with_google_calendar():
     calendar_service = build('calendar', 'v3', credentials=credentials)
     tasks_service = build('tasks', 'v1', credentials=credentials)
 
-    # list all events in given calendar
+    return calendar_service, tasks_service
+
+def list_all_events_and_tasks():
+    calendar_service, tasks_service = connect_with_google_calendar()
+     # list all events in given calendar
     events_result = calendar_service.events().list(calendarId='jsdmaster2023@gmail.com').execute()
     events = events_result.get('items', [])
     for event in events:
@@ -55,7 +59,7 @@ def main(file_name):
     calendar_model = calendar_mm.model_from_file(file_name)
     
     print(calendar_model.owner.email) #checking if the model is valid
-    connect_with_google_calendar(); #connect with calendar and list all events and tasks
+    list_all_events_and_tasks(); #connect with calendar and list all events and tasks
 
 if __name__ == "__main__":
     main("calendarExample.cal")
