@@ -3,7 +3,7 @@ person jsdmaster2023@gmail.com
 Event "New Event" {
     description: This is a description of an event;
     time: { startDate: 2023-3-12; endDate: 2023-3-12; startTime: 19:00; endTime: 20:00; };
-    repeat: repeat every 2 m , on We, ends after 10 occurrences;
+    recurrence: {freq=weekly;count=5;byDay=Mo,We;};
     guests: ana@gmail.com, ivana@gmail.com;
     status: busy;
     visibility: private;
@@ -13,9 +13,11 @@ Event "New Event" {
 Task "New task": 
  "You need to do something...",
   2023-3-12, 20:00, 
-  repeat every 2 w , on Mo, ends after 10 occurrences, all day;
+  {freq=monthly;count=5;byMonth=4;byMonthDay=13;},
+  all day;
 
 Reminder "New Reminder":
     2023-03-11,
     15:00,
-    repeat every 2 w , on Mo, ends never, all day;
+   {freq=daily;interval=5;},
+    all day;
