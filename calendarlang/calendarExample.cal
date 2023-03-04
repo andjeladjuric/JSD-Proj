@@ -2,7 +2,7 @@ person jsdmaster2023@gmail.com
 
 Event "New Event" {
     description: This is a description of an event;
-    time: { startDate: 2023-3-12; endDate: 2023-3-12; startTime: 19:00; endTime: 20:00; };
+    time: { startDate: 2023-3-12; endDate: 2023-3-12; startTime: 19:00; endTime: 20:00; timeZone: Europe/London; };
     recurrence: {freq=weekly;count=5;byDay=Mo,We;};
     guests: ana@gmail.com, ivana@gmail.com;
     status: busy;
@@ -10,14 +10,12 @@ Event "New Event" {
     notifications: notification 15 min;
 }
 
+Tasklist "My new tasklist";
+
 Task "New task": 
  "You need to do something...",
-  2023-3-12, 20:00, 
-  {freq=monthly;count=5;byMonth=4;byMonthDay=13;},
-  all day;
+  2023-3-12, 20:00;
 
-Reminder "New Reminder":
-    2023-03-11,
-    15:00,
-   {freq=daily;interval=5;},
-    all day;
+Find events where owner is "jsdmaster2023@gmail.com" and time is between "2023-3-1" and "2023-3-15"
+
+List pending tasks in tasklist: "My new tasklist"

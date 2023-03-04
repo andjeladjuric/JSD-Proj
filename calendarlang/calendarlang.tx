@@ -1,8 +1,10 @@
 GoogleCalendarModel:
-  owner=Person 
+  owner=Person
   events*=GoogleCalendarEvent
+  taslists*=GoogleTasklist
   tasks*=GoogleCalendarTask
-  reminders*=GoogleCalendarReminder
+  findEvents*=FindEventsByTimeAndOwner
+  findTasks*=ListCompletedTasks
 ;
 
 GoogleCalendarEvent:
@@ -17,22 +19,15 @@ GoogleCalendarEvent:
   '}'
 ;
 
+GoogleTasklist:
+  'Tasklist' '"' title=Sentance '";'
+;
 
 GoogleCalendarTask:
   'Task' '"' title=Sentance '"' ':'
   ('"' description=Sentance '"' ',')?
   date=Date ','
-  time=Time ','
-  recurrence= RecurrenceRule','
-  allDay?='all day' ';'
-;
-
-GoogleCalendarReminder:
-    'Reminder' '"' title=Sentance '"' ':'
-    date=Date ','
-    time=Time ','
-    recurrence= RecurrenceRule','
-    allDay?='all day' ';'
+  time=Time ';'
 ;
 
 GoogleCalendarAppoitment:
@@ -42,9 +37,13 @@ GoogleCalendarAppoitment:
     ('startTime: ' eventStartTime=Time ';')?
     ('endTime: ' eventEndTime=Time ';')?
     ('location: ' eventLocation=Sentance ';')?
+    ('timeZone: ' eventTimeZone=TimeZone ';')?
   '}'
 ;
 
+TimeZone:
+  /[A-Za-z_\/+~-]+/
+;
 
 RecurrenceRule:
   '{'
@@ -82,10 +81,23 @@ EventVisibility:
   'public' | 'private' | 'default'
 ;
 
+FindEventsByTimeAndOwner:
+  'Find events where'
+    'owner is' '"' owner=mailAdrRule '"' 'and'
+    'time is between' '"' start=Date '"' 'and' '"' end=Date '"'
+;
+
+ListCompletedTasks:
+  'List' status=TaskStatus 'tasks in tasklist: ' '"' tasklist=Sentance '"'
+;
+
+TaskStatus:
+  'completed' | 'pending'
+;
+
 Person:
   'person' email=mailAdrRule
 ;
-
 
 mailAdrRule:
   /[\w\.]+@([\w]+\.)+[\w]{2,4}/
