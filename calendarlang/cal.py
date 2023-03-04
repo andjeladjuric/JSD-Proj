@@ -59,7 +59,7 @@ def main(file_name):
     calendar_model = calendar_mm.model_from_file(file_name)
     
     print(calendar_model.owner.email) #checking if the model is valid
-    list_all_events_and_tasks(); #connect with calendar and list all events and tasks
+    #list_all_events_and_tasks(); #connect with calendar and list all events and tasks
 
 if __name__ == "__main__":
     main("calendarExample.cal")
