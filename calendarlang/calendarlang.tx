@@ -88,11 +88,11 @@ FindEventsByTimeAndOwner:
 ;
 
 ListCompletedTasks:
-  'List' status=TaskStatus 'tasks'
+  'List' status=TaskStatus 'tasks in tasklist: ' '"' tasklist=Sentance '"'
 ;
 
 TaskStatus:
-  'completed' | 'incomplete'
+  'completed' | 'pending'
 ;
 
 Person:
