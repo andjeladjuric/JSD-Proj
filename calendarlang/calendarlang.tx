@@ -3,7 +3,7 @@ GoogleCalendarModel:
   events*=GoogleCalendarEvent
   taslists*=GoogleTasklist
   tasks*=GoogleCalendarTask
-  findEvnets*=FindEventsByTimeAndOwner
+  findEvents*=FindEventsByTimeAndOwner
   findTasks*=ListCompletedTasks
 ;
 
