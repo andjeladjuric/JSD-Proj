@@ -49,20 +49,20 @@ RecurrenceRule:
   '{'
     'freq=' freq=FrequentlyRepeatRule ';' 
     ('count=' count=INT ';')?
-    ('byDay=' byday+=RepeatDay[','] ';')? 
-    ('byMonth=' byMonth=INT ';')? 
-    ('byMonthDay=' byMonthDay=INT ';')?
+    ('byDay=' byDay+=RepeatDay[','] ';')? 
+    ('byMonth=' byMonth+=INT[','] ';')? 
+    ('byMonthDay=' byMonthDay+=INT[','] ';')?
     ('until=' until=Date ';')? 
     ('interval=' interval=INT ';')?
   '}'
 ;
 
 FrequentlyRepeatRule:
-  ('daily' | 'weekly' | 'monthly' | 'yearly')
+  ('DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY')
 ;
 
 RepeatDay:
-  ('Mo' | 'Tu'| 'We'| 'Th'| 'Fr'| 'St' | 'Su')
+  ('MO' | 'TU'| 'WE'| 'TH'| 'FR'| 'ST' | 'SU')
 ;
 
 EndsRule:

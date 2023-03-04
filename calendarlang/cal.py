@@ -65,6 +65,7 @@ def main(file_name):
     #checking if the model is valid
     events = Events()
     calendar_service, tasks_service = connect_with_google_calendar()
+    events.create_event(calendar_service, calendar_model)
 
     if (events.check_if_timezone_is_valid(calendar_model)):
         events.query_events_by_rule(calendar_model, calendar_service)

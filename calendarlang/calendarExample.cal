@@ -1,9 +1,29 @@
 person jsdmaster2023@gmail.com
 
-Event "New Event" {
+Event "New  event for pratice" {
     description: This is a description of an event;
     time: { startDate: 2023-3-12; endDate: 2023-3-12; startTime: 19:00; endTime: 20:00; timeZone: Europe/London; };
-    recurrence: {freq=weekly;count=5;byDay=Mo,We;};
+    recurrence: {freq=WEEKLY;count=5;byDay=MO,WE;};
+    guests: ana@gmail.com, ivana@gmail.com;
+    status: busy;
+    visibility: private;
+    notifications: notification 15 min;
+}
+
+Event "New  event for pratice 01" {
+    description: This is a description of an event;
+    time: { startDate: 2023-3-12; endDate: 2023-3-12; startTime: 19:00; endTime: 20:00; timeZone: Europe/London; };
+    recurrence: {freq=WEEKLY;count=5;byDay=MO,WE;byMonth=1,2;};
+    guests: ana@gmail.com, ivana@gmail.com;
+    status: busy;
+    visibility: private;
+    notifications: notification 15 min;
+}
+
+Event "New  event for pratice 02" {
+    description: This is a description of an event;
+    time: { startDate: 2023-3-12; endDate: 2023-3-12; startTime: 19:00; endTime: 20:00; timeZone: Europe/London; };
+    recurrence: {freq=WEEKLY;count=5;byMonth=1,2;byMonthDay=12,13;};
     guests: ana@gmail.com, ivana@gmail.com;
     status: busy;
     visibility: private;
