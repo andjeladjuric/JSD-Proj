@@ -11,8 +11,8 @@ GoogleCalendarEvent:
   'Event'  '"' title=Sentance '"' '{'
   'description:' description=Sentance ';'
   'time:' time=GoogleCalendarAppoitment ';'
-  'recurrence:' recurrence=RecurrenceRule ';'
-  'guests:' guests*=mailAdrRule[',']';'
+  ('recurrence:' recurrence=RecurrenceRule ';')?
+  ('guests:' guests*=mailAdrRule[',']';')?
   ('status:' status=EventStatus ';')?
   ('visibility:' visibility=EventVisibility ';')?
   ('notifications:' notifications*=EventNotification[','] ';')?

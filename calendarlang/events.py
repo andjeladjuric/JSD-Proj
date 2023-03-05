@@ -4,72 +4,81 @@ from requests import HTTPError
 
 class Events():
     def create_reminders(self,event):
-        reminders=''
-        counter=0
+        if (event.notifications != []):
+            reminders=''
+            counter=0
 
-        for reminder in event.notifications:
-            reminders+='{\'method\':\''+reminder.method+"\',"
+            for reminder in event.notifications:
+                reminders+='{\'method\':\''+reminder.method+"\',"
 
-            counter+=1
-            counterForReminder=0
+                counter+=1
+                counterForReminder=0
 
-            for rem in reminder.remindMeFor:
-                reminders+="\'"+rem.timeFrame+"\':"+str(rem.count)
-                
-                counterForReminder+=1
-                if (counterForReminder < len(reminder.remindMeFor)):
-                    reminders+=","
+                for rem in reminder.remindMeFor:
+                    reminders+="\'"+rem.timeFrame+"\':"+str(rem.count)
                     
-            if (counter == len(event.notifications)):
-                reminders+="}"
-            else:
-                reminders+="},"
-            
-        reminders_json = json.loads(reminders.replace("'", '"'))
-        return reminders_json
+                    counterForReminder+=1
+                    if (counterForReminder < len(reminder.remindMeFor)):
+                        reminders+=","
+                        
+                if (counter == len(event.notifications)):
+                    reminders+="}"
+                else:
+                    reminders+="},"
+                
+            reminders_json = json.loads(reminders.replace("'", '"'))
+            return reminders_json
+        
+        return None
                 
     def recurrence(self,event):
-        recurrence='RRULE:'
 
-        if (event.recurrence.freq != None):
-            recurrence+='FREQ='+event.recurrence.freq+';'
-             
-        if (event.recurrence.count != None):
-            recurrence+='COUNT='+str(event.recurrence.count)+';'
-             
-        if (event.recurrence.interval != None):
-            recurrence+='INTERVAL='+str(event.recurrence.interval)+';'
+        if(event.recurrence != None):
+            recurrence='RRULE:'
+
+            if (event.recurrence.freq != None):
+                recurrence+='FREQ='+event.recurrence.freq+';'
+                
+            if (event.recurrence.count != None):
+                recurrence+='COUNT='+str(event.recurrence.count)+';'
+                
+            if (event.recurrence.interval != None):
+                recurrence+='INTERVAL='+str(event.recurrence.interval)+';'
+            
+            if (event.recurrence.until != None):
+                recurrence+='UNTIL='+str(event.recurrence.until)+';'
+                
+            if (event.recurrence.byMonth != []):
+                byMonth = ''
+                for month in event.recurrence.byMonth:
+                    byMonth += str(month) + ","
+                recurrence+='BYMONTH='+byMonth+';'
+
+            if (event.recurrence.byMonthDay != []):
+                byMonthDay = ''
+                for monthDay in event.recurrence.byMonthDay:
+                    byMonthDay += str(monthDay) + ","
+                recurrence += 'BYMONTHDAY='+byMonthDay+';'
+
+            elif (event.recurrence.byDay != []) :
+                byDay = ''
+                for day in event.recurrence.byDay:
+                    byDay += str(day) + ","
+                recurrence += 'BYDAY='+byDay+';'
+
+            return recurrence
         
-        if (event.recurrence.until != None):
-            recurrence+='UNTIL='+str(event.recurrence.until)+';'
-             
-        if (event.recurrence.byMonth != []):
-            byMonth = ''
-            for month in event.recurrence.byMonth:
-                byMonth += str(month) + ","
-            recurrence+='BYMONTH='+byMonth+';'
-
-        if (event.recurrence.byMonthDay != []):
-            byMonthDay = ''
-            for monthDay in event.recurrence.byMonthDay:
-                byMonthDay += str(monthDay) + ","
-            recurrence += 'BYMONTHDAY='+byMonthDay+';'
-
-        elif (event.recurrence.byDay != []) :
-            byDay = ''
-            for day in event.recurrence.byDay:
-                byDay += str(day) + ","
-            recurrence += 'BYDAY='+byDay+';'
-
-        return recurrence
+        return None
     
     def emails(self, event):
-        emails=[]
-
-        for guest in event.guests:
-            emails.append( {'email': guest})
+        if(event.guests != []):
+            emails=[]
+            for guest in event.guests:
+                emails.append( {'email': guest})
+            
+            return emails
         
-        return emails
+        return None
     
     def start_time(self,event):
         year = event.time.eventStartDate.year
