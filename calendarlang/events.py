@@ -2,67 +2,100 @@ from datetime import datetime, time, timedelta
 import pytz,json
 
 class Events():
-    def create_event(self, calendar_service, calendar_model):
-        for event in calendar_model.events:
-            start_time = datetime(2023, 3, 10, 8, 0, tzinfo= pytz.timezone(event.time.eventTimeZone))
-            end_time = start_time + timedelta(hours=1)
-
-            emails=[]
-            for guest in event.guests:
-                emails.append( {'email': guest})
-
-            recurrence='RRULE:'
-            if (event.recurrence.freq != None):
-                recurrence+='FREQ='+event.recurrence.freq+';'
+    def recurrence(self,event):
+        recurrence='RRULE:'
+        if (event.recurrence.freq != None):
+            recurrence+='FREQ='+event.recurrence.freq+';'
              
-            if (event.recurrence.count != None):
-                recurrence+='COUNT='+str(event.recurrence.count)+';'
+        if (event.recurrence.count != None):
+            recurrence+='COUNT='+str(event.recurrence.count)+';'
              
-            if (event.recurrence.interval != None):
-                recurrence+='INTERVAL='+str(event.recurrence.interval)+';'
+        if (event.recurrence.interval != None):
+            recurrence+='INTERVAL='+str(event.recurrence.interval)+';'
+        
+        if (event.recurrence.until != None):
+            recurrence+='UNTIL='+str(event.recurrence.until)+';'
              
-            if (event.recurrence.byMonth != []):
-                byMonth = ''
-                for month in event.recurrence.byMonth:
-                    byMonth += str(month) + ","
-                recurrence+='BYMONTH='+byMonth+';'
+        if (event.recurrence.byMonth != []):
+            byMonth = ''
+            for month in event.recurrence.byMonth:
+                byMonth += str(month) + ","
+            recurrence+='BYMONTH='+byMonth+';'
 
-            if (event.recurrence.byMonthDay != []):
-                byMonthDay = ''
-                for monthDay in event.recurrence.byMonthDay:
-                    byMonthDay += str(monthDay) + ","
-                recurrence += 'BYMONTHDAY='+byMonthDay+';'
-            elif (event.recurrence.byDay != []) :
-                byDay = ''
-                for day in event.recurrence.byDay:
-                    byDay += str(day) + ","
-                recurrence += 'BYDAY='+byDay+';'
-            
-            event_data = {
+        if (event.recurrence.byMonthDay != []):
+            byMonthDay = ''
+            for monthDay in event.recurrence.byMonthDay:
+                byMonthDay += str(monthDay) + ","
+            recurrence += 'BYMONTHDAY='+byMonthDay+';'
+        elif (event.recurrence.byDay != []) :
+            byDay = ''
+            for day in event.recurrence.byDay:
+                byDay += str(day) + ","
+            recurrence += 'BYDAY='+byDay+';'
+
+        return recurrence
+    
+    def emails(self, event):
+        emails=[]
+        for guest in event.guests:
+            emails.append( {'email': guest})
+        
+        return emails
+    
+    def start_time(self,event):
+        year = event.time.eventStartDate.year
+        month = event.time.eventStartDate.month
+        day = event.time.eventStartDate.day
+
+        hour = event.time.eventStartTime.hour
+        minute = event.time.eventStartTime.minute
+
+        start_time = datetime(year, month, day, hour, minute, tzinfo= pytz.timezone(event.time.eventTimeZone))
+        return (start_time)
+    
+    def end_time(self,event):
+        year = event.time.eventEndDate.year
+        month = event.time.eventEndDate.month
+        day = event.time.eventEndDate.day
+
+        hour = event.time.eventEndTime.hour
+        minute = event.time.eventEndTime.minute
+
+        end_time = datetime(year, month, day, hour, minute, tzinfo= pytz.timezone(event.time.eventTimeZone))
+        return (end_time)
+
+    
+    def event(self,event):    
+        event_data = {
             'summary': event.title,
             'location': event.time.eventLocation,
             'description': event.description,
             'start': {
-                'dateTime': start_time.isoformat(),
+                'dateTime': self.start_time(event).isoformat(),
                 'timeZone':  event.time.eventTimeZone,
             },
             'end': {
-                'dateTime': end_time.isoformat(),
+                'dateTime': self.end_time(event).isoformat(),
                 'timeZone':  event.time.eventTimeZone,
             },
             'recurrence': [
-                recurrence
+                self.recurrence(event)
             ],
-            'attendees': emails
+            'attendees': self.emails(event)
             ,
             'reminders': {
                 'useDefault': True,
             },
             'visibility': event.visibility,
-            'guestsCanSeeOtherGuests': True,
-            'guestsCanInviteOthers': True
+            'guestsCanSeeOtherGuests': event.guestsCanSeeOtherGuests,
+            'guestsCanInviteOthers': event.guestsCanInviteOthers
             }
+        
+        return event_data
 
+    def insert_event(self, calendar_service, calendar_model):
+        for event in calendar_model.events:
+            event_data = self.event(event)
             calendar_service.events().insert(calendarId="primary", body=event_data).execute()
 
     def check_if_timezone_is_valid(self, calendar_model):
