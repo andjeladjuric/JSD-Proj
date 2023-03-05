@@ -1,9 +1,36 @@
-from datetime import datetime, time, timedelta
+from datetime import datetime
 import pytz,json
+from requests import HTTPError
 
 class Events():
+    def create_reminders(self,event):
+        reminders=''
+        counter=0
+
+        for reminder in event.notifications:
+            reminders+='{\'method\':\''+reminder.method+"\',"
+
+            counter+=1
+            counterForReminder=0
+
+            for rem in reminder.remindMeFor:
+                reminders+="\'"+rem.timeFrame+"\':"+str(rem.count)
+                
+                counterForReminder+=1
+                if (counterForReminder < len(reminder.remindMeFor)):
+                    reminders+=","
+                    
+            if (counter == len(event.notifications)):
+                reminders+="}"
+            else:
+                reminders+="},"
+            
+        reminders_json = json.loads(reminders.replace("'", '"'))
+        return reminders_json
+                
     def recurrence(self,event):
         recurrence='RRULE:'
+
         if (event.recurrence.freq != None):
             recurrence+='FREQ='+event.recurrence.freq+';'
              
@@ -27,6 +54,7 @@ class Events():
             for monthDay in event.recurrence.byMonthDay:
                 byMonthDay += str(monthDay) + ","
             recurrence += 'BYMONTHDAY='+byMonthDay+';'
+
         elif (event.recurrence.byDay != []) :
             byDay = ''
             for day in event.recurrence.byDay:
@@ -37,6 +65,7 @@ class Events():
     
     def emails(self, event):
         emails=[]
+
         for guest in event.guests:
             emails.append( {'email': guest})
         
@@ -64,39 +93,50 @@ class Events():
         end_time = datetime(year, month, day, hour, minute, tzinfo= pytz.timezone(event.time.eventTimeZone))
         return (end_time)
 
-    
     def event(self,event):    
-        event_data = {
-            'summary': event.title,
-            'location': event.time.eventLocation,
-            'description': event.description,
-            'start': {
-                'dateTime': self.start_time(event).isoformat(),
-                'timeZone':  event.time.eventTimeZone,
-            },
-            'end': {
-                'dateTime': self.end_time(event).isoformat(),
-                'timeZone':  event.time.eventTimeZone,
-            },
-            'recurrence': [
-                self.recurrence(event)
-            ],
-            'attendees': self.emails(event)
-            ,
-            'reminders': {
-                'useDefault': True,
-            },
-            'visibility': event.visibility,
-            'guestsCanSeeOtherGuests': event.guestsCanSeeOtherGuests,
-            'guestsCanInviteOthers': event.guestsCanInviteOthers
-            }
+        try:
+            event_data = {
+                'summary': event.title,
+                'location': event.time.eventLocation,
+                'description': event.description,
+                'start': {
+                    'dateTime': self.start_time(event).isoformat(),
+                    'timeZone':  event.time.eventTimeZone,
+                },
+                'end': {
+                    'dateTime': self.end_time(event).isoformat(),
+                    'timeZone':  event.time.eventTimeZone,
+                },
+                'recurrence': [
+                    self.recurrence(event)
+                ],
+                'attendees': self.emails(event)
+                ,
+                'reminders': {
+                    'useDefault': False,
+                    'overrides': [
+                       self.create_reminders(event)
+                    ],
+                },
+                'visibility': event.visibility,
+                'guestsCanSeeOtherGuests': event.guestsCanSeeOtherGuests,
+                'guestsCanInviteOthers': event.guestsCanInviteOthers,
+                'status': event.status
+                }
         
-        return event_data
+            return event_data
+        
+        except HTTPError as error:
+            print('An error occurred:', error)
+            return None
+
 
     def insert_event(self, calendar_service, calendar_model):
+
         for event in calendar_model.events:
             event_data = self.event(event)
-            calendar_service.events().insert(calendarId="primary", body=event_data).execute()
+            if (event_data != None):
+                calendar_service.events().insert(calendarId="primary", body=event_data).execute()
 
     def check_if_timezone_is_valid(self, calendar_model):
         timezones = set(pytz.all_timezones)

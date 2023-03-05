@@ -15,7 +15,7 @@ GoogleCalendarEvent:
   'guests:' guests*=mailAdrRule[',']';'
   ('status:' status=EventStatus ';')?
   ('visibility:' visibility=EventVisibility ';')?
-  ('notifications:' notifications*=EventNotification['|'] ';')?
+  ('notifications:' notifications*=EventNotification[','] ';')?
   ('guestsCanSeeOtherGuests:' guestsCanSeeOtherGuests=BOOL';')?
   ('guestsCanInviteOthers:' guestsCanInviteOthers=BOOL ';')?
   '}'
@@ -59,6 +59,24 @@ RecurrenceRule:
   '}'
 ;
 
+EventNotification:
+    method=EventNotificationMethod 
+    remindMeFor+=EventNotificationReminder['-']
+;
+
+EventNotificationReminder:
+  timeFrame=EventNotificationTimeFrame
+  count=INT
+;
+
+EventNotificationMethod:
+ ('email' | 'popup' | 'sms')
+;
+
+EventNotificationTimeFrame:
+  ('weeks' | 'days' | 'hours' | 'minutes')
+;
+
 FrequentlyRepeatRule:
   ('DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY')
 ;
@@ -71,12 +89,8 @@ EndsRule:
   'never' | 'on' Date | 'after' INT 'occurrences'
 ;
 
-EventNotification:
-  'email' | 'notification' INT 'min' | 'h' | 'd' | 'w' 
-;
-
 EventStatus:
-  'busy' | 'free'
+  'confirmed' | 'tentative' | 'cancelled' 
 ;
 
 EventVisibility:
