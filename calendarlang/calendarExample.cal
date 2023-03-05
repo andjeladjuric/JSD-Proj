@@ -8,6 +8,8 @@ Event "New  event for pratice" {
     status: busy;
     visibility: private;
     notifications: notification 15 min;
+    guestsCanSeeOtherGuests: True;
+    guestsCanInviteOthers: True;
 }
 
 Event "New  event for pratice 01" {

@@ -16,6 +16,8 @@ GoogleCalendarEvent:
   ('status:' status=EventStatus ';')?
   ('visibility:' visibility=EventVisibility ';')?
   ('notifications:' notifications*=EventNotification['|'] ';')?
+  ('guestsCanSeeOtherGuests:' guestsCanSeeOtherGuests=BOOL';')?
+  ('guestsCanInviteOthers:' guestsCanInviteOthers=BOOL ';')?
   '}'
 ;
 
