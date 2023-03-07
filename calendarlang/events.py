@@ -3,29 +3,27 @@ import pytz,json
 from requests import HTTPError
 
 class Events():
+    def setDefaultForReminders(self,event):
+        if (event.notifications != []):
+            return False
+        return True
+    
     def create_reminders(self,event):
         if (event.notifications != []):
-            reminders=''
+            reminders='['
             counter=0
 
             for reminder in event.notifications:
-                reminders+='{\'method\':\''+reminder.method+"\',"
-
                 counter+=1
-                counterForReminder=0
+                reminders+='{\'method\':\''+ reminder.method + "\',"
+                reminders+='\'minutes\':'+ str(reminder.minutes)
 
-                for rem in reminder.remindMeFor:
-                    reminders+="\'"+rem.timeFrame+"\':"+str(rem.count)
-                    
-                    counterForReminder+=1
-                    if (counterForReminder < len(reminder.remindMeFor)):
-                        reminders+=","
-                        
-                if (counter == len(event.notifications)):
-                    reminders+="}"
-                else:
+                if (counter < len(event.notifications)):
                     reminders+="},"
-                
+                else:
+                    reminders+="}"
+                    
+            reminders+=']'
             reminders_json = json.loads(reminders.replace("'", '"'))
             return reminders_json
         
@@ -122,10 +120,8 @@ class Events():
                 'attendees': self.emails(event)
                 ,
                 'reminders': {
-                    'useDefault': False,
-                    'overrides': [
-                       self.create_reminders(event)
-                    ],
+                    'useDefault': self.setDefaultForReminders(event),
+                    'overrides': self.create_reminders(event)
                 },
                 'visibility': event.visibility,
                 'guestsCanSeeOtherGuests': event.guestsCanSeeOtherGuests,

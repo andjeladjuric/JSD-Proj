@@ -61,21 +61,13 @@ RecurrenceRule:
 
 EventNotification:
     method=EventNotificationMethod 
-    remindMeFor+=EventNotificationReminder['-']
-;
-
-EventNotificationReminder:
-  timeFrame=EventNotificationTimeFrame
-  count=INT
+    'minutes' minutes=INT
 ;
 
 EventNotificationMethod:
- ('email' | 'popup' | 'sms')
+ ('email' | 'popup' )
 ;
 
-EventNotificationTimeFrame:
-  ('weeks' | 'days' | 'hours' | 'minutes')
-;
 
 FrequentlyRepeatRule:
   ('DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY')
