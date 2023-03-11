@@ -1,13 +1,37 @@
 person jsdmaster2023@gmail.com
 
-Event "New Event" {
+Event "New  event for pratice" {
     description: This is a description of an event;
-    time: { startDate: 2023-3-12; endDate: 2023-3-12; startTime: 19:00; endTime: 20:00; timeZone: Europe/London; };
-    recurrence: {freq=weekly;count=5;byDay=Mo,We;};
+    time: { startDate: 2023-3-09; endDate: 2023-3-09; startTime: 18:00; endTime: 21:00; timeZone: Europe/London; };
+    recurrence: {freq=WEEKLY;count=5;byDay=MO,WE;};
     guests: ana@gmail.com, ivana@gmail.com;
-    status: busy;
+    status: tentative;
     visibility: private;
-    notifications: notification 15 min;
+    notifications: email minutes 15;
+    guestsCanSeeOtherGuests: True;
+    guestsCanInviteOthers: True;
+}
+
+Event "New  event for pratice 02" {
+    description: This is a description of an event;
+    time: { startDate: 2023-3-11; endDate: 2023-3-11; startTime: 19:00; endTime: 20:00; timeZone: Europe/London; };
+    recurrence: {freq=WEEKLY;count=5;byDay=MO,WE;byMonth=1,2;};
+    guests: ana@gmail.com, ivana@gmail.com;
+    status: confirmed;
+    visibility: private;
+    notifications: email days 2 - hours 12 - minutes 34;
+    guestsCanSeeOtherGuests: True;
+    guestsCanInviteOthers: False;
+}
+
+Event "New  event for pratice 03" {
+    description: This is a description of an event;
+    time: { startDate: 2023-3-08; endDate: 2023-3-06; startTime: 09:00; endTime: 11:00; timeZone: Europe/London; };
+    recurrence: {freq=WEEKLY;count=5;byMonth=1,2;byMonthDay=12,13;};
+    guests: ana@gmail.com, ivana@gmail.com;
+    status: confirmed;
+    visibility: private;
+    notifications: email hours 2 - minutes 12;
 }
 
 Tasklist "My new tasklist";

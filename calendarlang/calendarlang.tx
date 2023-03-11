@@ -11,11 +11,13 @@ GoogleCalendarEvent:
   'Event'  '"' title=Sentance '"' '{'
   'description:' description=Sentance ';'
   'time:' time=GoogleCalendarAppoitment ';'
-  'recurrence:' recurrence=RecurrenceRule ';'
-  'guests:' guests*=mailAdrRule[',']';'
+  ('recurrence:' recurrence=RecurrenceRule ';')?
+  ('guests:' guests*=mailAdrRule[',']';')?
   ('status:' status=EventStatus ';')?
   ('visibility:' visibility=EventVisibility ';')?
-  ('notifications:' notifications*=EventNotification['|'] ';')?
+  ('notifications:' notifications*=EventNotification[','] ';')?
+  ('guestsCanSeeOtherGuests:' guestsCanSeeOtherGuests=BOOL';')?
+  ('guestsCanInviteOthers:' guestsCanInviteOthers=BOOL ';')?
   '}'
 ;
 
@@ -49,32 +51,38 @@ RecurrenceRule:
   '{'
     'freq=' freq=FrequentlyRepeatRule ';' 
     ('count=' count=INT ';')?
-    ('byDay=' byday+=RepeatDay[','] ';')? 
-    ('byMonth=' byMonth=INT ';')? 
-    ('byMonthDay=' byMonthDay=INT ';')?
+    ('byDay=' byDay+=RepeatDay[','] ';')? 
+    ('byMonth=' byMonth+=INT[','] ';')? 
+    ('byMonthDay=' byMonthDay+=INT[','] ';')?
     ('until=' until=Date ';')? 
     ('interval=' interval=INT ';')?
   '}'
 ;
 
+EventNotification:
+    method=EventNotificationMethod 
+    'minutes' minutes=INT
+;
+
+EventNotificationMethod:
+ ('email' | 'popup' )
+;
+
+
 FrequentlyRepeatRule:
-  ('daily' | 'weekly' | 'monthly' | 'yearly')
+  ('DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY')
 ;
 
 RepeatDay:
-  ('Mo' | 'Tu'| 'We'| 'Th'| 'Fr'| 'St' | 'Su')
+  ('MO' | 'TU'| 'WE'| 'TH'| 'FR'| 'ST' | 'SU')
 ;
 
 EndsRule:
   'never' | 'on' Date | 'after' INT 'occurrences'
 ;
 
-EventNotification:
-  'email' | 'notification' INT 'min' | 'h' | 'd' | 'w' 
-;
-
 EventStatus:
-  'busy' | 'free'
+  'confirmed' | 'tentative' | 'cancelled' 
 ;
 
 EventVisibility:
