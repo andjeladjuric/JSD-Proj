@@ -1,8 +1,34 @@
 from datetime import datetime
-import pytz,json
+from tzlocal import get_localzone_name
+import pytz, json
 from requests import HTTPError
 
 class Events():
+    def check_if_timezone_is_valid(self, calendar_model):
+        timezones = set(pytz.all_timezones)
+
+        for event in calendar_model.events:
+            print(event.time.eventTimeZone)
+            if (event.time.eventTimeZone != None):
+                if (not event.time.eventTimeZone in timezones):
+                    return False
+            
+        return True
+
+    def check_recurrence_rule(self, calendar_model):
+        for event in calendar_model.events:
+            if (event.recurrence != None):
+                if (event.recurrence.freq == 'DAILY' and event.recurrence.interval != None and event.recurrence.byDay != []):
+                    return False
+                
+                if (event.recurrence.freq == 'WEEKLY' and event.recurrence.byDay != [] and event.recurrence.byMonthDay != []):
+                    return False
+
+                if (event.recurrence.freq == 'YEARLY' and event.recurrence.byDay != [] and event.recurrence.byMonthDay != []):
+                    return False
+
+        return True
+
     def setDefaultForReminders(self,event):
         if (event.notifications != []):
             return False
@@ -10,58 +36,61 @@ class Events():
     
     def create_reminders(self,event):
         if (event.notifications != []):
-            reminders='['
-            counter=0
+            reminders = []
 
-            for reminder in event.notifications:
-                counter+=1
-                reminders+='{\'method\':\''+ reminder.method + "\',"
-                reminders+='\'minutes\':'+ str(reminder.minutes)
-
-                if (counter < len(event.notifications)):
-                    reminders+="},"
+            for notification in event.notifications:
+                interval = 0
+                if notification.interval == 'hours':
+                    interval = notification.number * 60
+                elif notification.interval == 'days':
+                    interval = notification.number * 24 * 60
+                elif notification.interval == 'weeks':
+                    interval = notification.number * 7 * 24 * 60
                 else:
-                    reminders+="}"
-                    
-            reminders+=']'
-            reminders_json = json.loads(reminders.replace("'", '"'))
-            return reminders_json
+                    interval = notification.number
+
+                reminder = {
+                    "method": notification.method,
+                    "minutes": interval
+                }
+
+                reminders.append(reminder)
+
+            print(reminders)
+            return reminders
         
         return None
                 
     def recurrence(self,event):
-
         if(event.recurrence != None):
             recurrence='RRULE:'
 
             if (event.recurrence.freq != None):
                 recurrence+='FREQ='+event.recurrence.freq+';'
                 
-            if (event.recurrence.count != None):
-                recurrence+='COUNT='+str(event.recurrence.count)+';'
+            if (event.recurrence.ends.count != None and event.recurrence.ends.count != 0):
+                recurrence+='COUNT='+str(event.recurrence.ends.count)+';'
                 
             if (event.recurrence.interval != None):
                 recurrence+='INTERVAL='+str(event.recurrence.interval)+';'
             
-            if (event.recurrence.until != None):
-                recurrence+='UNTIL='+str(event.recurrence.until)+';'
+            if (event.recurrence.ends.until != None):
+                rule = event.recurrence.ends.until
+                until_string = f'{rule.year}-{rule.month}-{rule.day}'
+                until = datetime.strptime(until_string, "%Y-%m-%d")
+                iso_date = until.strftime("%Y%m%dT%H%M%SZ")
+                recurrence+='UNTIL='+str(iso_date)+';'
                 
             if (event.recurrence.byMonth != []):
-                byMonth = ''
-                for month in event.recurrence.byMonth:
-                    byMonth += str(month) + ","
+                byMonth = ",".join(str(element) for element in event.recurrence.byMonth)
                 recurrence+='BYMONTH='+byMonth+';'
 
             if (event.recurrence.byMonthDay != []):
-                byMonthDay = ''
-                for monthDay in event.recurrence.byMonthDay:
-                    byMonthDay += str(monthDay) + ","
+                byMonthDay = ",".join(str(element) for element in event.recurrence.byMonthDay)
                 recurrence += 'BYMONTHDAY='+byMonthDay+';'
 
             elif (event.recurrence.byDay != []) :
-                byDay = ''
-                for day in event.recurrence.byDay:
-                    byDay += str(day) + ","
+                byDay = ",".join(str(element) for element in event.recurrence.byDay)
                 recurrence += 'BYDAY='+byDay+';'
 
             return recurrence
@@ -86,7 +115,11 @@ class Events():
         hour = event.time.eventStartTime.hour
         minute = event.time.eventStartTime.minute
 
-        start_time = datetime(year, month, day, hour, minute, tzinfo= pytz.timezone(event.time.eventTimeZone))
+        if (event.time.eventTimeZone != None):
+            start_time = datetime(year, month, day, hour, minute, tzinfo=pytz.timezone(event.time.eventTimeZone))
+        else:
+            start_time = datetime(year, month, day, hour, minute, tzinfo=datetime.now(pytz.utc).astimezone().tzinfo)
+
         return (start_time)
     
     def end_time(self,event):
@@ -97,22 +130,25 @@ class Events():
         hour = event.time.eventEndTime.hour
         minute = event.time.eventEndTime.minute
 
-        end_time = datetime(year, month, day, hour, minute, tzinfo= pytz.timezone(event.time.eventTimeZone))
+        if (event.time.eventTimeZone != None):
+            end_time = datetime(year, month, day, hour, minute, tzinfo=pytz.timezone(event.time.eventTimeZone))
+        else:
+            end_time = datetime(year, month, day, hour, minute, tzinfo=datetime.now(pytz.utc).astimezone().tzinfo)
+
         return (end_time)
 
-    def event(self,event):    
+    def event(self,event):
+        
         try:
             event_data = {
                 'summary': event.title,
                 'location': event.time.eventLocation,
                 'description': event.description,
                 'start': {
-                    'dateTime': self.start_time(event).isoformat(),
-                    'timeZone':  event.time.eventTimeZone,
+                    'dateTime': self.start_time(event).isoformat()
                 },
                 'end': {
-                    'dateTime': self.end_time(event).isoformat(),
-                    'timeZone':  event.time.eventTimeZone,
+                    'dateTime': self.end_time(event).isoformat()
                 },
                 'recurrence': [
                     self.recurrence(event)
@@ -127,30 +163,29 @@ class Events():
                 'guestsCanSeeOtherGuests': event.guestsCanSeeOtherGuests,
                 'guestsCanInviteOthers': event.guestsCanInviteOthers,
                 'status': event.status
-                }
-        
+            }
+
+            if (event.time.eventTimeZone != None):
+                event_data['end']['timeZone'] = event.time.eventTimeZone
+                event_data['start']['timeZone'] = event.time.eventTimeZone
+            else:
+                event_data['end']['timeZone'] = get_localzone_name()
+                event_data['start']['timeZone'] = get_localzone_name()
+
+            print(event_data)
             return event_data
-        
+    
         except HTTPError as error:
             print('An error occurred:', error)
             return None
 
 
     def insert_event(self, calendar_service, calendar_model):
-
         for event in calendar_model.events:
             event_data = self.event(event)
             if (event_data != None):
                 calendar_service.events().insert(calendarId="primary", body=event_data).execute()
 
-    def check_if_timezone_is_valid(self, calendar_model):
-        timezones = set(pytz.all_timezones)
-
-        for event in calendar_model.events:
-            if(not event.time.eventTimeZone in timezones):
-                return False
-            
-        return True
 
     def query_events_by_rule(self, calendar_model, calendar_service):
         found_events = []
