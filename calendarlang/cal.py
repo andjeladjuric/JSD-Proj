@@ -64,14 +64,16 @@ def main(file_name):
     
     #checking if the model is valid
     events = Events()
-    calendar_service, tasks_service = connect_with_google_calendar()
-    events.insert_event(calendar_service, calendar_model)
-
-    if (events.check_if_timezone_is_valid(calendar_model)):
-        events.query_events_by_rule(calendar_model, calendar_service)
-
     tasks = Tasks()
-    tasks.query_tasks_by_tasklist_and_status(calendar_model, tasks_service)
+    calendar_service, tasks_service = connect_with_google_calendar()
+
+    if (events.check_if_timezone_is_valid(calendar_model) and events.check_recurrence_rule(calendar_model)):
+        events.insert_event(calendar_service, calendar_model)
+        events.query_events_by_rule(calendar_model, calendar_service)
+        tasks.query_tasks_by_tasklist_and_status(calendar_model, tasks_service)
+    else:
+        print('Model is not valid, please check your input!')
+
 
     #list_all_events_and_tasks(calendar_service, tasks_service); #list all events and tasks
 

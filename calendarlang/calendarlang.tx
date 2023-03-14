@@ -10,14 +10,14 @@ GoogleCalendarModel:
 GoogleCalendarEvent:
   'Event'  '"' title=Sentance '"' '{'
   'description:' description=Sentance ';'
-  'time:' time=GoogleCalendarAppoitment ';'
+  'time:' time=GoogleCalendarAppointment ';'
   ('recurrence:' recurrence=RecurrenceRule ';')?
   ('guests:' guests*=mailAdrRule[',']';')?
   ('status:' status=EventStatus ';')?
   ('visibility:' visibility=EventVisibility ';')?
   ('notifications:' notifications*=EventNotification[','] ';')?
-  ('guestsCanSeeOtherGuests:' guestsCanSeeOtherGuests=BOOL';')?
-  ('guestsCanInviteOthers:' guestsCanInviteOthers=BOOL ';')?
+  ('guests can see other guests:' guestsCanSeeOtherGuests=BOOL';')?
+  ('guests can invite others:' guestsCanInviteOthers=BOOL ';')?
   '}'
 ;
 
@@ -32,14 +32,14 @@ GoogleCalendarTask:
   time=Time ';'
 ;
 
-GoogleCalendarAppoitment:
+GoogleCalendarAppointment:
   '{'
-    'startDate: ' eventStartDate=Date ';'
-    'endDate: ' eventEndDate=Date ';'
-    ('startTime: ' eventStartTime=Time ';')?
-    ('endTime: ' eventEndTime=Time ';')?
+    'start date: ' eventStartDate=Date ';'
+    'end date: ' eventEndDate=Date ';'
+    ('start time: ' eventStartTime=Time ';')?
+    ('end time: ' eventEndTime=Time ';')?
     ('location: ' eventLocation=Sentance ';')?
-    ('timeZone: ' eventTimeZone=TimeZone ';')?
+    ('timezone: ' eventTimeZone=TimeZone ';')?
   '}'
 ;
 
@@ -49,36 +49,41 @@ TimeZone:
 
 RecurrenceRule:
   '{'
-    'freq=' freq=FrequentlyRepeatRule ';' 
-    ('count=' count=INT ';')?
-    ('byDay=' byDay+=RepeatDay[','] ';')? 
-    ('byMonth=' byMonth+=INT[','] ';')? 
-    ('byMonthDay=' byMonthDay+=INT[','] ';')?
-    ('until=' until=Date ';')? 
-    ('interval=' interval=INT ';')?
+    'frequency:' freq=FrequentlyRepeatRule ';' 
+    ('on:' byDay+=RepeatDay[','] ';')? 
+    ('in months:' byMonth+=Month[','] ';')? 
+    ('on month days:' byMonthDay+=INT[','] ';')? 
+    ('interval:' interval=INT ';')?
+    ('ends' ends=EndsRule ';')?
   '}'
 ;
 
+EndsRule:
+  ( 'after:' count=INT | 'on:' until=Date )
+;
+
 EventNotification:
-    method=EventNotificationMethod 
-    'minutes' minutes=INT
+  method=EventNotificationMethod number=INT interval=NotificationInterval 'before'
+;
+
+NotificationInterval:
+  ('minutes'| 'hours' | 'days' | 'weeks')
 ;
 
 EventNotificationMethod:
  ('email' | 'popup' )
 ;
 
-
 FrequentlyRepeatRule:
-  ('DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY')
+  ('daily' | 'weekly' | 'monthly' | 'yearly')
 ;
 
 RepeatDay:
-  ('MO' | 'TU'| 'WE'| 'TH'| 'FR'| 'ST' | 'SU')
+  ('monday' | 'tuesday'| 'wednesday'| 'thursday'| 'friday'| 'saturday' | 'sunday')
 ;
 
-EndsRule:
-  'never' | 'on' Date | 'after' INT 'occurrences'
+Month:
+ ('january' | 'february' | 'march' | 'april' | 'may' | 'june' | 'july' | 'august' | 'september' | 'october' | 'november' | 'december')
 ;
 
 EventStatus:
