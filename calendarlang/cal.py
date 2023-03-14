@@ -69,8 +69,8 @@ def main(file_name):
 
     if (events.check_if_timezone_is_valid(calendar_model) and events.check_recurrence_rule(calendar_model)):
         events.insert_event(calendar_service, calendar_model)
-        #events.query_events_by_rule(calendar_model, calendar_service)
-        #tasks.query_tasks_by_tasklist_and_status(calendar_model, tasks_service)
+        events.query_events_by_rule(calendar_model, calendar_service)
+        tasks.query_tasks_by_tasklist_and_status(calendar_model, tasks_service)
     else:
         print('Model is not valid, please check your input!')
 

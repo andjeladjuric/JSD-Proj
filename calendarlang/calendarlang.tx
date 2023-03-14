@@ -51,7 +51,7 @@ RecurrenceRule:
   '{'
     'frequency:' freq=FrequentlyRepeatRule ';' 
     ('on:' byDay+=RepeatDay[','] ';')? 
-    ('in months:' byMonth+=INT[','] ';')? 
+    ('in months:' byMonth+=Month[','] ';')? 
     ('on month days:' byMonthDay+=INT[','] ';')? 
     ('interval:' interval=INT ';')?
     ('ends' ends=EndsRule ';')?
@@ -75,11 +75,15 @@ EventNotificationMethod:
 ;
 
 FrequentlyRepeatRule:
-  ('DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY')
+  ('daily' | 'weekly' | 'monthly' | 'yearly')
 ;
 
 RepeatDay:
-  ('MO' | 'TU'| 'WE'| 'TH'| 'FR'| 'ST' | 'SU')
+  ('monday' | 'tuesday'| 'wednesday'| 'thursday'| 'friday'| 'saturday' | 'sunday')
+;
+
+Month:
+ ('january' | 'february' | 'march' | 'april' | 'may' | 'june' | 'july' | 'august' | 'september' | 'october' | 'november' | 'december')
 ;
 
 EventStatus:

@@ -8,7 +8,6 @@ class Events():
         timezones = set(pytz.all_timezones)
 
         for event in calendar_model.events:
-            print(event.time.eventTimeZone)
             if (event.time.eventTimeZone != None):
                 if (not event.time.eventTimeZone in timezones):
                     return False
@@ -56,7 +55,6 @@ class Events():
 
                 reminders.append(reminder)
 
-            print(reminders)
             return reminders
         
         return None
@@ -66,7 +64,7 @@ class Events():
             recurrence='RRULE:'
 
             if (event.recurrence.freq != None):
-                recurrence+='FREQ='+event.recurrence.freq+';'
+                recurrence+='FREQ='+event.recurrence.freq.upper()+';'
                 
             if (event.recurrence.ends.count != None and event.recurrence.ends.count != 0):
                 recurrence+='COUNT='+str(event.recurrence.ends.count)+';'
@@ -82,15 +80,27 @@ class Events():
                 recurrence+='UNTIL='+str(iso_date)+';'
                 
             if (event.recurrence.byMonth != []):
-                byMonth = ",".join(str(element) for element in event.recurrence.byMonth)
+                months = []
+                for element in event.recurrence.byMonth:
+                    month_number = datetime.strptime(element, "%B").month
+                    months.append(str(month_number))
+
+                byMonth = ",".join(months)
                 recurrence+='BYMONTH='+byMonth+';'
 
             if (event.recurrence.byMonthDay != []):
                 byMonthDay = ",".join(str(element) for element in event.recurrence.byMonthDay)
                 recurrence += 'BYMONTHDAY='+byMonthDay+';'
 
-            elif (event.recurrence.byDay != []) :
-                byDay = ",".join(str(element) for element in event.recurrence.byDay)
+            elif (event.recurrence.byDay != []):
+                days = []
+                for element in event.recurrence.byDay:
+                    if (element == 'saturday'):
+                        days.append('ST')
+                    else:
+                        days.append(element[:2].upper())
+
+                byDay = ",".join(days)
                 recurrence += 'BYDAY='+byDay+';'
 
             return recurrence
@@ -172,7 +182,6 @@ class Events():
                 event_data['end']['timeZone'] = get_localzone_name()
                 event_data['start']['timeZone'] = get_localzone_name()
 
-            print(event_data)
             return event_data
     
         except HTTPError as error:
