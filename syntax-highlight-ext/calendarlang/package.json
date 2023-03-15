@@ -1,0 +1,25 @@
+{
+  "name": "calendarlang",
+  "displayName": "calendarlang",
+  "description": "Syntax highlighting for calendar dsl",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.76.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [{
+      "id": "calendarlang",
+      "aliases": ["calendarlang", "calendarlang"],
+      "extensions": [".cal"],
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "calendarlang",
+      "scopeName": "source.calendar",
+      "path": "./syntaxes/calendarlang.tmLanguage.json"
+    }]
+  }
+}
