@@ -38,13 +38,28 @@ class Tasks():
         
         try:
             if any(tl['title'] == tasklist['title'] for tl in tasklists):
-                print(f"Vec postoji tasklista sa tim nazivom!") 
+                print(f"There is already created tasklist with the name {tasklist['title']}!") 
                 return
             else:
                 created_tasklist = tasks_service.tasklists().insert(body=tasklist).execute()
-                print(f"Tasklista sa nazivom " + created_tasklist['title'] + " je kreirana!")
+                print(f"Tasklist with name " + created_tasklist['title'] + " is created!")
         except:
-            print(f"Greska pri kreiranju!")
+            print(f"An error occured!")
 
         return created_tasklist
-        
+            
+    def delete_tasklist(self, tasks_service, tasklist_name):
+        tasklists_result = tasks_service.tasklists().list().execute()
+        tasklists = tasklists_result.get('items', [])
+
+        tasklist_id = None
+        for tasklist in tasklists:
+            if tasklist['title'] == tasklist_name:
+                tasklist_id = tasklist['id']
+                break
+
+        if tasklist_id is not None:
+            tasks_service.tasklists().delete(tasklist=tasklist_id).execute()
+            print(f"Tasklist '{tasklist_name}' deleted successfully.")
+        else:
+            print(f"No tasklist found with name '{tasklist_name}'.")
