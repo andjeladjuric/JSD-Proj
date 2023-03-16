@@ -29,24 +29,23 @@ class Tasks():
             print("\n{} \n\tstatus: {} \n\tdue: {}".format(
                 task['title'], task['status'], task['due']))
 
-    def create_new_tasklist(self, calendar_model, tasks_service):
-        tasklist = {
-            'title' : 'My new third tasklist'
-        }
-        tasklists_result = tasks_service.tasklists().list().execute()
-        tasklists = tasklists_result.get('items', [])
-        
+    def tasklist_data(self, tasklist):
         try:
-            if any(tl['title'] == tasklist['title'] for tl in tasklists):
-                print(f"There is already created tasklist with the name {tasklist['title']}!") 
-                return
-            else:
-                created_tasklist = tasks_service.tasklists().insert(body=tasklist).execute()
-                print(f"Tasklist with name " + created_tasklist['title'] + " is created!")
+            tasklist_data = {
+                'title' : tasklist.title
+            }
+            return tasklist_data
         except:
-            print(f"An error occured!")
+            return None
 
-        return created_tasklist
+
+    def create_new_tasklist(self, calendar_model, tasks_service):
+        for tasklist in calendar_model.tasklists:
+            tasklist_data = self.tasklist_data(tasklist)
+            tasks_service.tasklists().insert(body=tasklist_data).execute()
+        
+        print(f"Tasklist is created!")
+
             
     def delete_tasklist(self, tasks_service, tasklist_name):
         tasklists_result = tasks_service.tasklists().list().execute()

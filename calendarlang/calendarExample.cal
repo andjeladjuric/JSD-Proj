@@ -10,7 +10,7 @@ Event "New Event" {
     notifications: notification 15 min;
 }
 
-
+Tasklist "My new tasklist";
 
 Task "New task": 
  "You need to do something...",

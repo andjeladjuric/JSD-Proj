@@ -71,7 +71,7 @@ def main(file_name):
 
     tasks = Tasks()
     tasks.query_tasks_by_tasklist_and_status(calendar_model, tasks_service)
-    created_tasklist = tasks.create_new_tasklist(calendar_model, tasks_service)
+    tasks.create_new_tasklist(calendar_model, tasks_service)
     # tasks.delete_tasklist(tasks_service, 'My new third tasklist')
     tasks.insert_task(tasks_service, calendar_model)
     #list_all_events_and_tasks(calendar_service, tasks_service); #list all events and tasks

@@ -1,7 +1,7 @@
 GoogleCalendarModel:
   owner=Person
   events*=GoogleCalendarEvent
-  taslists*=GoogleTasklist
+  tasklists*=GoogleTasklist
   tasks*=GoogleCalendarTask
   findEvents*=FindEventsByTimeAndOwner
   findTasks*=ListCompletedTasks
