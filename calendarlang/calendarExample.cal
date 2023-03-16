@@ -1,13 +1,49 @@
 person jsdmaster2023@gmail.com
 
-Event "New Event" {
+Event "New  event for pratice" {
     description: This is a description of an event;
-    time: { startDate: 2023-3-12; endDate: 2023-3-12; startTime: 19:00; endTime: 20:00; timeZone: Europe/London; };
-    recurrence: {freq=weekly;count=5;byDay=Mo,We;};
-    guests: ana@gmail.com, ivana@gmail.com;
-    status: busy;
+    time: { 
+        start date: 2023-3-09; 
+        end date: 2023-3-09; 
+        start time: 18:00; 
+        end time: 21:00;
+    };
+    recurrence: {
+        frequency: weekly;
+        on: monday, tuesday;
+        in months: march, april;
+        interval: 1;
+        ends on: 2023-4-24;
+    };
+    guests: andjela.djuric28@gmail.com;
+    status: tentative;
     visibility: private;
-    notifications: notification 15 min;
+    notifications: popup 5 minutes before;
+    guests can see other guests: True;
+    guests can invite others: True;
+}
+
+Event "New  event for pratice 2" {
+    description: This is a description of an event 2;
+    time: { 
+        start date: 2023-3-10; 
+        end date: 2023-3-10; 
+        start time: 18:00; 
+        end time: 21:00;
+        timezone: Europe/London;
+    };
+    recurrence: {
+        frequency: daily;
+        in months: march, april;
+        interval: 15;
+        ends on: 2023-4-24;
+    };
+    guests: andjela.djuric28@gmail.com;
+    status: tentative;
+    visibility: private;
+    notifications: popup 5 minutes before;
+    guests can see other guests: True;
+    guests can invite others: True;
 }
 
 Tasklist "My new tasklist";
