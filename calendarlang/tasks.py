@@ -63,3 +63,36 @@ class Tasks():
             print(f"Tasklist '{tasklist_name}' deleted successfully.")
         else:
             print(f"No tasklist found with name '{tasklist_name}'.")
+
+    def start_time(self,tasks):
+        year = tasks.date.year
+        month = tasks.date.month
+        day = tasks.date.day
+
+        hour = tasks.time.hour
+        minute = tasks.time.minute
+
+        return (start_time)
+
+
+    def task_data(self, task):
+        try:
+            task_data = {
+                'title': task.title,
+                'description': task.description,
+                'start': {
+                    'dateTime': start_time(task).isoformat(),
+                },
+            }
+            return task_data
+        except:
+            return None
+
+    def insert_task(self, tasks_service, calendar_model):
+        tasklists = tasks_service.tasklists().list(maxResults=1).execute()
+        print(tasklists)
+        for task in calendar_model.tasks:
+            task_data = self.task_data(task)
+            if (task_data != None):
+                tasks_service.tasks().insert(tasklist='@default',body=task_data).execute()
+
