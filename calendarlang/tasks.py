@@ -64,7 +64,7 @@ class Tasks():
         else:
             print(f"No tasklist found with name '{tasklist_name}'.")
 
-    def start_time(self,tasks):
+    def start_time(self, tasks):
         year = tasks.date.year
         month = tasks.date.month
         day = tasks.date.day
@@ -72,6 +72,7 @@ class Tasks():
         hour = tasks.time.hour
         minute = tasks.time.minute
 
+        start_time = datetime(year, month, day, hour, minute, tzinfo=datetime.now(pytz.utc).astimezone().tzinfo)
         return (start_time)
 
 
@@ -81,7 +82,7 @@ class Tasks():
                 'title': task.title,
                 'description': task.description,
                 'start': {
-                    'dateTime': start_time(task).isoformat(),
+                    'dateTime': self.start_time(task).isoformat(),
                 },
             }
             return task_data
@@ -89,8 +90,6 @@ class Tasks():
             return None
 
     def insert_task(self, tasks_service, calendar_model):
-        tasklists = tasks_service.tasklists().list(maxResults=1).execute()
-        print(tasklists)
         for task in calendar_model.tasks:
             task_data = self.task_data(task)
             if (task_data != None):
