@@ -52,6 +52,10 @@ Task "New task":
  "You need to do something...",
   2023-3-18, 20:00;
 
-Find events where owner is "jsdmaster2023@gmail.com" and time is between "2023-3-1" and "2023-3-15"
+Find events where owner is "jsdmaster2023@gmail.com" and time is between "2023-3-1" and "2023-3-20"
 
-List pending tasks in tasklist: "My new tasklist"
+Find events where owner is "jsdmaster2023@gmail.com"
+
+Find pending tasks in tasklist "My new tasklist"
+
+Find all tasks on 2023-03-17 in tasklist "My new tasklist"

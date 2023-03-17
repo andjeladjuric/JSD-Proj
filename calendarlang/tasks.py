@@ -10,7 +10,7 @@ class Tasks():
     def query_tasks_by_tasklist_and_status(self, calendar_model, tasks_service):
         found_tasks = []
         try:
-            for rule in calendar_model.findTasks:
+            for rule in calendar_model.findTasksByStatus:
                 title = rule.tasklist
                 status = rule.status
 
@@ -95,3 +95,29 @@ class Tasks():
                     tasks_service.tasks().insert(tasklist='@default',body=task_data).execute()
         except:
             print(f'An error found when creating task!')
+
+    def query_tasks_by_day(self, calendar_model, tasks_service):
+        found_tasks = []
+        try:
+            for rule in calendar_model.findTasksByDay:
+                title = rule.tasklist
+
+                date = datetime(rule.day.year, rule.day.month, rule.day.day, rule.day.hour, rule.day.minute, tzinfo=datetime.now(pytz.utc).astimezone().tzinfo)
+
+                tasklists_result = tasks_service.tasklists().list().execute()
+                tasklists = tasklists_result.get('items', [])
+
+                tasklist = self.__find_list_by_title(tasklists, title)
+                tasks_result = tasks_service.tasks().list(
+                    tasklist=tasklist['id'],
+                    showCompleted=True,
+                    due=date
+                ).execute()
+                tasks = tasks_result.get('items', [])
+                found_tasks.extend(tasks)
+
+            for task in tasks:
+                print("\n{} \n\tstatus: {} \n\tdue: {}".format(
+                    task['title'], task['status'], task['due']))
+        except:
+            print(f'Tasklist or task is none!')

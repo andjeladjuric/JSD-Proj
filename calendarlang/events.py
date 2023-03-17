@@ -202,20 +202,30 @@ class Events():
 
         for rule in calendar_model.findEvents:
             owner = rule.owner
-            start_string = f'{rule.start.year}-{rule.start.month}-{rule.start.day}';
-            end_string = f'{rule.end.year}-{rule.end.month}-{rule.end.day}';
-            start_date = datetime.strptime(start_string, "%Y-%m-%d")
-            end_date = datetime.strptime(end_string, "%Y-%m-%d")
+            
+            if (rule.start != None and rule.end != None):
+                start_string = f'{rule.start.year}-{rule.start.month}-{rule.start.day}';
+                end_string = f'{rule.end.year}-{rule.end.month}-{rule.end.day}';
+                start_date = datetime.strptime(start_string, "%Y-%m-%d")
+                end_date = datetime.strptime(end_string, "%Y-%m-%d")
 
-            events_result = calendar_service.events().list(
-                calendarId='primary',
-                timeMin=start_date.isoformat() + 'Z',
-                timeMax=end_date.isoformat() + 'Z',
-                singleEvents=True,
-                orderBy='startTime'
-            ).execute()
-            events = events_result.get('items', [])
-            found_events.extend(events)
+                events_result = calendar_service.events().list(
+                    calendarId='primary',
+                    timeMin=start_date.isoformat() + 'Z',
+                    timeMax=end_date.isoformat() + 'Z',
+                    singleEvents=True,
+                    orderBy='startTime'
+                ).execute()
+                events = events_result.get('items', [])
+                found_events.extend(events)
+            else:
+                events_result = calendar_service.events().list(
+                    calendarId='primary',
+                    singleEvents=True,
+                    orderBy='startTime'
+                ).execute()
+                events = events_result.get('items', [])
+                found_events.extend(events)
 
         for event in found_events:
             if(event["creator"].get("email", '') == owner):
