@@ -1,4 +1,5 @@
 from datetime import datetime
+import pytz
 
 class Tasks():
     def __find_list_by_title(self, tasklists, title):
@@ -73,16 +74,14 @@ class Tasks():
         minute = tasks.time.minute
 
         start_time = datetime(year, month, day, hour, minute, tzinfo=datetime.now(pytz.utc).astimezone().tzinfo)
-        return (start_time)
+        return start_time
 
     def task_data(self, task):
         try:
             task_data = {
                 'title': task.title,
-                'description': task.description,
-                'start': {
-                    'dateTime': self.start_time(task).isoformat(),
-                },
+                'notes': task.description,
+                'due': self.start_time(task).isoformat()
             }
             return task_data
         except:
