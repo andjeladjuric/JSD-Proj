@@ -1,15 +1,13 @@
 from textx import metamodel_from_file
 from os.path import dirname, join, exists
-import pytz
-from datetime import datetime
 
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 
-from events import Events
-from tasks import Tasks
+from .events import Events
+from .tasks import Tasks
 
 def connect_with_google_calendar():
     config_file = 'config.json'
