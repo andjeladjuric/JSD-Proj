@@ -4,7 +4,8 @@ GoogleCalendarModel:
   tasklists*=GoogleTasklist
   tasks*=GoogleCalendarTask
   findEvents*=FindEventsByTimeAndOwner
-  findTasks*=ListCompletedTasks
+  findTasksByStatus*=ListCompletedTasks
+  findTasksByDay*=FindTasksOnDay
 ;
 
 GoogleCalendarEvent:
@@ -96,12 +97,16 @@ EventVisibility:
 
 FindEventsByTimeAndOwner:
   'Find events where'
-    'owner is' '"' owner=mailAdrRule '"' 'and'
-    'time is between' '"' start=Date '"' 'and' '"' end=Date '"'
+    'owner is' '"' owner=mailAdrRule '"' 
+    ('and time is between' '"' start=Date '"' 'and' '"' end=Date '"')?
+;
+
+FindTasksOnDay:
+  'Find tasks on' '"' day=Date '"' 'in tasklist ' '"' tasklist=Sentance '"'
 ;
 
 ListCompletedTasks:
-  'List' status=TaskStatus 'tasks in tasklist: ' '"' tasklist=Sentance '"'
+  'Find' status=TaskStatus 'tasks in tasklist ' '"' tasklist=Sentance '"'
 ;
 
 TaskStatus:
@@ -109,7 +114,7 @@ TaskStatus:
 ;
 
 Person:
-  'person' email=mailAdrRule
+  'person:' email=mailAdrRule ';'
 ;
 
 mailAdrRule:

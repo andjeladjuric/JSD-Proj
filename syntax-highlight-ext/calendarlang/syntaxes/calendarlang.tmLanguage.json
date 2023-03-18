@@ -10,6 +10,9 @@
     },
     {
       "include": "#constants"
+    },
+    {
+      "include": "#variables"
     }
   ],
   "repository": {
@@ -34,7 +37,11 @@
     },
     "constants": {
       "name": "constant.language",
-      "match": "\\b(description|title|time|recurrence|guests|status|visibility|notifications|can|see other|invite others|start date|end date|start time|end time|location|timezone|after|on|frequency|in months|on month days|interval|ends|before|List|tasks in tasklist|Find events where|owner is|and|is between)\\b"
+      "match": "\\b(description|title|time|recurrence|guests|status|visibility|notifications|can|see other|invite others|start date|end date|start time|end time|location|timezone|after|on|frequency|in months|on month days|interval|ends|List|tasks in tasklist|Find events where|owner is|and|is between|Find|tasks|in tasklist)\\b"
+    },
+    "variables": {
+      "name": "variable.parameter",
+      "match": "\\b(complete|pending|public|private|default|monday|tuesday|wednesday|thursday|friday|saturday|sunday|january|february|march|april|may|june|july|august|september|october|november|december|confirmed|tentative|cancelled|daily|weekly|monthly|yearly|email|popup|minutes|hours|days|weeks|after|on|before)\\b|[A-Za-z]+/[A-Za-z]+|[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}, [0-9]{1,2}:[0-9]{1,2}|[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}|[0-9]{1,2}:[0-9]{1,2}"
     }
   },
   "scopeName": "source.calendar"
