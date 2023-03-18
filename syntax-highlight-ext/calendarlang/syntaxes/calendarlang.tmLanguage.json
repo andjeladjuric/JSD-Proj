@@ -1,0 +1,48 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "calendarlang",
+  "patterns": [
+    {
+      "include": "#keywords"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#constants"
+    },
+    {
+      "include": "#variables"
+    }
+  ],
+  "repository": {
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.calendarlang",
+          "match": "\\b(Event|Task|Tasklist|person)\\b"
+        }
+      ]
+    },
+    "strings": {
+      "name": "string.quoted.double.calendarlang",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        {
+          "name": "constant.character.escape.calendarlang",
+          "match": "\\\\."
+        }
+      ]
+    },
+    "constants": {
+      "name": "constant.language",
+      "match": "\\b(description|title|time|recurrence|guests|status|visibility|notifications|can|see other|invite others|start date|end date|start time|end time|location|timezone|after|on|frequency|in months|on month days|interval|ends|List|tasks in tasklist|Find events where|owner is|and|is between|Find|tasks|in tasklist)\\b"
+    },
+    "variables": {
+      "name": "variable.parameter",
+      "match": "\\b(complete|pending|public|private|default|monday|tuesday|wednesday|thursday|friday|saturday|sunday|january|february|march|april|may|june|july|august|september|october|november|december|confirmed|tentative|cancelled|daily|weekly|monthly|yearly|email|popup|minutes|hours|days|weeks|after|on|before)\\b|[A-Za-z]+/[A-Za-z]+|[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}, [0-9]{1,2}:[0-9]{1,2}|[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}|[0-9]{1,2}:[0-9]{1,2}"
+    }
+  },
+  "scopeName": "source.calendar"
+}

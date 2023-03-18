@@ -1,0 +1,138 @@
+GoogleCalendarModel:
+  owner=Person
+  events*=GoogleCalendarEvent
+  tasklists*=GoogleTasklist
+  tasks*=GoogleCalendarTask
+  findEvents*=FindEventsByTimeAndOwner
+  findTasksByStatus*=ListCompletedTasks
+  findTasksByDay*=FindTasksOnDay
+;
+
+GoogleCalendarEvent:
+  'Event'  '"' title=Sentance '"' '{'
+  'description:' description=Sentance ';'
+  'time:' time=GoogleCalendarAppointment ';'
+  ('recurrence:' recurrence=RecurrenceRule ';')?
+  ('guests:' guests*=mailAdrRule[',']';')?
+  ('status:' status=EventStatus ';')?
+  ('visibility:' visibility=EventVisibility ';')?
+  ('notifications:' notifications*=EventNotification[','] ';')?
+  ('guests can see other guests:' guestsCanSeeOtherGuests=BOOL';')?
+  ('guests can invite others:' guestsCanInviteOthers=BOOL ';')?
+  '}'
+;
+
+GoogleTasklist:
+  'Tasklist' '"' title=Sentance '";'
+;
+
+GoogleCalendarTask:
+  'Task' '"' title=Sentance '"' ':'
+  ('"' description=Sentance '"' ',')?
+  date=Date ','
+  time=Time ';'
+;
+
+GoogleCalendarAppointment:
+  '{'
+    'start date: ' eventStartDate=Date ';'
+    'end date: ' eventEndDate=Date ';'
+    ('start time: ' eventStartTime=Time ';')?
+    ('end time: ' eventEndTime=Time ';')?
+    ('location: ' eventLocation=Sentance ';')?
+    ('timezone: ' eventTimeZone=TimeZone ';')?
+  '}'
+;
+
+TimeZone:
+  /[A-Za-z_\/+~-]+/
+;
+
+RecurrenceRule:
+  '{'
+    'frequency:' freq=FrequentlyRepeatRule ';' 
+    ('on:' byDay+=RepeatDay[','] ';')? 
+    ('in months:' byMonth+=Month[','] ';')? 
+    ('on month days:' byMonthDay+=INT[','] ';')? 
+    ('interval:' interval=INT ';')?
+    ('ends' ends=EndsRule ';')?
+  '}'
+;
+
+EndsRule:
+  ( 'after:' count=INT | 'on:' until=Date )
+;
+
+EventNotification:
+  method=EventNotificationMethod number=INT interval=NotificationInterval 'before'
+;
+
+NotificationInterval:
+  ('minutes'| 'hours' | 'days' | 'weeks')
+;
+
+EventNotificationMethod:
+ ('email' | 'popup' )
+;
+
+FrequentlyRepeatRule:
+  ('daily' | 'weekly' | 'monthly' | 'yearly')
+;
+
+RepeatDay:
+  ('monday' | 'tuesday'| 'wednesday'| 'thursday'| 'friday'| 'saturday' | 'sunday')
+;
+
+Month:
+ ('january' | 'february' | 'march' | 'april' | 'may' | 'june' | 'july' | 'august' | 'september' | 'october' | 'november' | 'december')
+;
+
+EventStatus:
+  'confirmed' | 'tentative' | 'cancelled' 
+;
+
+EventVisibility:
+  'public' | 'private' | 'default'
+;
+
+FindEventsByTimeAndOwner:
+  'Find events where'
+    'owner is' '"' owner=mailAdrRule '"' 
+    ('and time is between' '"' start=Date '"' 'and' '"' end=Date '"')?
+;
+
+FindTasksOnDay:
+  'Find tasks on' '"' day=Date '"' 'in tasklist ' '"' tasklist=Sentance '"'
+;
+
+ListCompletedTasks:
+  'Find' status=TaskStatus 'tasks in tasklist ' '"' tasklist=Sentance '"'
+;
+
+TaskStatus:
+  'completed' | 'pending'
+;
+
+Person:
+  'person:' email=mailAdrRule ';'
+;
+
+mailAdrRule:
+  /[\w\.]+@([\w]+\.)+[\w]{2,4}/
+;
+
+Time:
+ hour=INT ':' minute=INT
+;
+
+Date:
+  year=INT '-' month=INT '-' day=INT 
+;
+
+Comment:
+    /\/\/.*$/
+;
+
+Sentance:
+  /[^";]*/
+;
