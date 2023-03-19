@@ -4,9 +4,71 @@ The aim of this project is to introduce a Domain-specific language that helps ha
 
 # Overview
 
-A defined Domain-specific language is created with goal to provide easier usage of Google Calendar. In order to achive this goal language needs to support basic Google Calendar functions, such as creation and maintainence of events, tasks and task lists for user. Defined language has that ability and, in addition to that, it goes one step further with queries that offers. These queris have simple human language inspired syntax for filltering users events based on time of occurance, owner and tasklist.
+A defined Domain-specific language is created with goal to provide easier usage of Google Calendar. In order to achive this goal language needs to support basic Google Calendar functions, such as creation and maintainence of events, tasks and task lists for user. Defined language has those abilities and, in addition to that, it goes one step further with queriess it offers. These queris have simple syntax inspired by human language for filltering users events based on time of occurance, owner and tasklist.
 
 # Example of Usage
+
+    person: jsdmaster2023@gmail.com;
+
+    Event "New  event for pratice" {
+        description: This is the first example event;
+        time: {
+            start date: 2023-3-09;
+            end date: 2023-3-09;
+            start time: 18:00;
+            end time: 21:00;
+        };
+        recurrence: {
+            frequency: weekly;
+            on: monday, tuesday;
+            in months: march, april;
+            interval: 1;
+            ends on: 2023-4-24;
+        };
+        guests: andjela.djuric28@gmail.com;
+        status: tentative;
+        visibility: private;
+        notifications: popup 5 minutes before;
+        guests can see other guests: True;
+        guests can invite others: True;
+    }
+
+    Event "New  event for pratice 2" {
+        description: This is the second example event;
+        time: {
+            start date: 2023-3-10;
+            end date: 2023-3-10;
+            start time: 18:00;
+            end time: 21:00;
+            timezone: Europe/London;
+        };
+        recurrence: {
+            frequency: daily;
+            in months: march, april;
+            interval: 15;
+            ends on: 2023-4-24;
+        };
+        guests: andjela.djuric28@gmail.com;
+        status: tentative;
+        visibility: private;
+        notifications: popup 5 minutes before;
+        guests can see other guests: True;
+        guests can invite others: True;
+    }
+
+    Tasklist "My new tasklist 2";
+
+    Task "New task":
+    "You need to do something...",
+    2023-3-18, 20:00;
+
+    Find events where owner is "jsdmaster2023@gmail.com" and time is between "2023-3-1" and "2023-3-20"
+
+    Find events where owner is "jsdmaster2023@gmail.com"
+
+    Find pending tasks in tasklist "My new tasklist"
+
+    Find tasks on "2023-03-17" in tasklist "My new tasklist"
 
 # How to use
 
