@@ -1,13 +1,5 @@
-# JSD za generisanje CV dokumenta
-
-## Opis jezika
-
-Plan je da kreiramo jezik koji će pomoći da se pripremi i generiše CV. Jezik će omogućiti prikazivanje sledećih podataka:
-
-- Lični podaci (ime, prezime, adresa, kontakt, mail, korisni linkovi, trenutna pozicija, kratka biografija i sl.)
-- Iskustvo (podrazumijeva poziciju, vremenski period, kompaniju, lokacija, kratak opis pozicije)
-- Obrazovanje (podrazumijeva školu/ustanovu, vremenski period, lokaciju, zvanje/diplomu)
-- Vještine (podrazumijeva tehničke vještine i _soft skills_)
-- Jezici 
-- Projekti (naziv, _key responsibilities_, kratak opis, korištene tehnologije...)
-- Nagrade/dostignuća
+#Calendar DSL for Google Calendar
+The aim of this project is to introduce a Domain-specific language that helps handling events in Google Calendar(time-management and scheduling calendar service developed by Google).
+#Overview
+A defined Domain-specific language is created with goal to provide easier usage of Google Calendar. In order to achive this goal language needs to support basic Google Calendar functions, such as creation and maintainence of events, tasks and task lists for user. Defined language has that ability and, in addition to that, it goes one step further with queries that offers. These queris have simple, human language inspired, syntax for filltering users events based on time of occurance, owner and tasklist.
+#Example of Usage
